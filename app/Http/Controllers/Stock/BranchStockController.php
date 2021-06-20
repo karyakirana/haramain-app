@@ -1,30 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\Keuangan;
+namespace App\Http\Controllers\Stock;
 
 use App\Http\Controllers\Controller;
-use App\Models\Akuntansi\KategoriAkun;
+use App\Models\Stock\BranchStock;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
-class KategoriAkunController extends Controller
+class BranchStockController extends Controller
 {
-    /**
-     * interface kategori akun
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
     public function index()
     {
-        return view('components.pages.kategoriAkun');
+        return view('components.pages.branchStock');
     }
 
     /**
      * @return mixed
      * @throws \Exception
      */
-    public function kategoriAkunList()
+    public function branchStockList()
     {
-        $data = KategoriAkun::all();
+        $data = BranchStock::all();
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('Actions', function($row){
@@ -46,28 +42,18 @@ class KategoriAkunController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->id == null){
-            // if create data
-            $request->validate([
-                'kode'=>'required|unique:kategori_akuntansi',
-                'namaAkun'=>'required|unique:kategori_akuntansi',
-                'deskripsi' => 'required'
-            ]);
-
-        } else {
-            // if update data
-            $request->validate([
-                'kode'=>'required',
-                'namaAkun'=>'required'
-            ]);
-        }
+        $request->validate([
+            'namaGudang'=>'required',
+            'alamat'=>'required',
+        ]);
 
         $data = [
-            'kode'=>$request->kode,
-            'namaAkun'=>$request->namaAkun,
-            'deskripsi'=>$request->deskripsi,
+            'branchName'=>$request->namaGudang,
+            'alamat'=>$request->alamat,
+            'kota'=>$request->kota,
+            'keterangan'=>$request->keterangan
         ];
-        $store = KategoriAkun::updateOrCreate($data, ['id', $request->id]);
+        $store = BranchStock::updateOrCreate(['id'=> $request->id], $data);
         return response()->json(['status'=>true, 'keterangan'=>$store]);
     }
 
@@ -77,7 +63,7 @@ class KategoriAkunController extends Controller
      */
     public function edit($id)
     {
-        $data = KategoriAkun::find($id);
+        $data = BranchStock::find($id);
         return response()->json($data);
     }
 
@@ -87,7 +73,7 @@ class KategoriAkunController extends Controller
      */
     public function destroy($id)
     {
-        $destroy = KategoriAkun::destroy($id);
+        $destroy = BranchStock::destroy($id);
         return response()->json(['status'=>true, 'keterangan'=>$destroy]);
     }
 }

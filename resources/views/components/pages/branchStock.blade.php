@@ -18,12 +18,14 @@
         <x-nano.table class="align-middle gs-5 table-hover table-rounded table-striped border table-row-100" id="tableList" width="100%">
             <!--begin::Table head-->
             <x-nano.tableHead class="text-start text-gray-400 fw-bolder fs-7 text-uppercase">
-            <!--begin::Table row-->
-                <th>Kode</th>
-                <th>Ketegori</th>
+                <!--begin::Table row-->
+                <th>Nomor</th>
+                <th>Nama Gudang</th>
+                <th>Alamat</th>
+                <th>Kota</th>
                 <th>Keterangan</th>
                 <th class="text-center" width="15%">Actions</th>
-            <!--end::Table row-->
+                <!--end::Table row-->
             </x-nano.tableHead>
             <!--end::Table head-->
             <!--begin::Table body-->
@@ -58,16 +60,20 @@
             <x-mikro.form id="modal_form" action="#">
                 <input type="text" name="id" hidden>
                 <div class="mb-5">
-                    <label class="required">Kode</label>
-                    <input class="form-control" type="text" name="kode" required>
+                    <label class="required">Nama Gudang</label>
+                    <input class="form-control" type="text" name="namaGudang" required>
                 </div>
                 <div class="mb-5">
-                    <label class="required">Kategori Akun</label>
-                    <input class="form-control" type="text" name="namaAkun" required>
+                    <label class="required">Alamat</label>
+                    <input class="form-control" type="text" name="alamat" required>
                 </div>
                 <div class="mb-5">
-                    <label for="keterangan">Deskripsi</label>
-                    <input type="text" class="form-control" name="deskripsi">
+                    <label for="kota">Kota</label>
+                    <input type="text" class="form-control" name="kota">
+                </div>
+                <div class="mb-5">
+                    <label for="keterangan">Keterangan</label>
+                    <input type="text" class="form-control" name="keterangan">
                 </div>
                 <!--begin::Actions-->
                 <div class="text-center pt-15">
@@ -110,7 +116,7 @@
              */
             buttonAdd.addEventListener('click', addData);
             buttonCloseModal.addEventListener('click', closeModal);
-            buttonSubmitModal.addEventListener('click', storeData);
+            buttonSubmitModal.addEventListener('click', storeData); // update Or create
             // edit
             $('body').on('click', '#buttonEdit', function (){
                 let dataId = $(this).data('id');
@@ -130,16 +136,18 @@
                 order : [],
                 ajax : {
                     headers : headersCSRF,
-                    url : '{{ route('kategoriAkunList') }}',
+                    url : '{{ url('/') }}'+'/stock/daftargudang',
                     type : "PATCH",
                     data : {
-                        columnDefs : ['kode', 'namaAkun']
+                        columnDefs : ['branchName', 'alamat', 'kota',] // search
                     }
                 },
                 columns : [
-                    { data : "kode"},
-                    { data : "namaAkun"},
-                    { data : "deskripsi"},
+                    { data : "DT_RowIndex"},
+                    { data : "branchName"},
+                    { data : "alamat"},
+                    { data : "kota"},
+                    { data : "keterangan"},
                     { data : "Actions"}
                 ],
                 // lengthChange : false,
@@ -155,10 +163,10 @@
              * function of function
              */
 
-            // reload table
+                // reload table
             let reloadTable = function (){
-                $(tableList).DataTable().ajax.reload();
-            }
+                    $(tableList).DataTable().ajax.reload();
+                }
 
             // open modal
             function addData()
@@ -184,7 +192,7 @@
             {
                 $.ajax({
                     headers : headersCSRF,
-                    url : '{{ route('kategoriAkunStore') }}',
+                    url : '{{ url('/') }}'+'/stock/daftargudang',
                     method : "POST",
                     data : $(formData).serialize(),
                     dataType : "JSON",
@@ -197,7 +205,7 @@
                     },
                     error : function(jqXHR, textStatus, errorThrown0)
                     {
-                        // console.log(jqXHR.responseJSON);
+                        console.log(jqXHR.responseJSON);
                         // swal.fire({
                         //     html: jqXHR.responseJSON.message+"<br><br>"+jqXHR.responseJSON.file+"<br><br>Line: "+jqXHR.responseJSON.line,
                         // });
@@ -216,7 +224,7 @@
             {
                 $.ajax({
                     headers : headersCSRF,
-                    url : '{{ url('/keuangan/kategoriakun') }}'+'/'+id,
+                    url : '{{ url('/') }}'+'/stock/daftargudang'+'/'+id,
                     method: "GET",
                     dataType : "JSON",
                     success : function (data) {
@@ -224,9 +232,10 @@
                         document.getElementById('modal_form').reset(); // reset data
                         // insert value
                         $('[name="id"]').val(data.id);
-                        $('[name="kode"]').val(data.kode);
-                        $('[name="namaAkun"]').val(data.namaAkun);
-                        $('[name="deskripsi"]').val(data.deskripsi);
+                        $('[name="namaGudang"]').val(data.branchName);
+                        $('[name="alamat"]').val(data.alamat);
+                        $('[name="kota"]').val(data.kota);
+                        $('[name="keterangan"]').val(data.keterangan);
                         modalForm.show();
                     },
                     error : function (jqXHR, textStatus, errorThrown)
@@ -244,7 +253,7 @@
 
                     $.ajax({
                         headers : headersCSRF,
-                        url : '{{ url('/') }}'+'/keuangan/kategoriakun'+'/'+id,
+                        url : '{{ url('/') }}'+'/stock/daftargudang'+'/'+id,
                         method: "DELETE",
                         dataType : "JSON",
                         success : function (data) {

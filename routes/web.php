@@ -27,3 +27,4 @@ Route::get('/dashboard', function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/keuangan.php';
+require __DIR__.'/stock.php';
