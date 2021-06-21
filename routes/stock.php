@@ -29,4 +29,11 @@ Route::middleware('auth')->group(function(){
     Route::delete('/stock/temp/detil/{id}', [\App\Http\Controllers\Stock\StockTempController::class, 'destroy']); // delete stock temp
     Route::post('/stock/temp/detil', [\App\Http\Controllers\Stock\StockTempController::class, 'store']);// store detiltemp
 
+    // inventory
+    Route::get('/inventory/refresh', [\App\Http\Controllers\Stock\InventoryController::class, 'index']);
+    Route::patch('/inventory/refresh', [\App\Http\Controllers\Stock\InventoryController::class, 'inventoyList']);
+    Route::put('/inventory/refresh', [\App\Http\Controllers\Stock\InventoryController::class, 'addStockFromLast']);
+    Route::put('/inventory/refresh/fromstockmasuk', [\App\Http\Controllers\Stock\InventoryController::class, 'addStockFromGudang']);
+
+
 });

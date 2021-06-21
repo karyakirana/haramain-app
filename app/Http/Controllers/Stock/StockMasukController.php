@@ -36,13 +36,10 @@ class StockMasukController extends Controller
                 return ['supplierNama'=>$row->supplier->namaSupplier, 'userNama'=>$row->user->name, 'branchNama'=>$row->branch->branchName ?? ''];
             })
             ->addColumn('Actions', function($row){
-                $edit = "<button class='btn btn-sm w-30' id='buttonEdit' data-id='".$row->id."'>
+                $edit = "<a href='".url("/")."/stock/transaksi/".$row->id."/edit' class='btn btn-sm w-30' id='buttonEdit' data-id='".$row->id."'>
                             <i class='la la-edit text-info fs-2'></i>
-                         </button>";
-                $delete = "<button class='btn btn-sm' id='buttonDelete' data-id='".$row->id."'>
-                            <i class='la la-trash text-danger fs-2'></i>
-                         </button>";
-                return $edit.$delete;
+                         </a>";
+                return $edit;
             })
             ->rawColumns(['Actions', 'relation'])
             ->make(true);
